@@ -1,0 +1,61 @@
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+public class RainbowLines : Form
+{
+    private int x = 0;
+    private int y = 0;
+    private Color[] colors = { Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet };
+    private int colorIndex = 0;
+    private Timer timer;
+
+    public RainbowLines()
+    {
+        this.Width = 800;
+        this.Height = 600;
+        this.DoubleBuffered = true;
+
+        timer = new Timer();
+        timer.Interval = 10;
+        timer.Tick += Timer_Tick;
+        timer.Start();
+    }
+
+    private void Timer_Tick(object sender, EventArgs e)
+    {
+        x += 5;
+        y += 3;
+
+        if (x > this.Width)
+        {
+            x = 0;
+            colorIndex = (colorIndex + 1) % colors.Length;
+        }
+        if (y > this.Height)
+        {
+            y = 0;
+            colorIndex = (colorIndex + 1) % colors.Length;
+        }
+
+        Invalidate();
+    }
+
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        base.OnPaint(e);
+        e.Graphics.DrawLine(new Pen(colors[colorIndex], 5), 0, 0, x, y);
+        e.Graphics.DrawLine(new Pen(colors[(colorIndex + 1) % colors.Length], 5), this.Width, 0, x, y);
+        e.Graphics.DrawLine(new Pen(colors[(colorIndex + 2) % colors.Length], 5), 0, this.Height, x, y);
+        e.Graphics.DrawLine(new Pen(colors[(colorIndex + 3) % colors.Length], 5), this.Width, this.Height, x, y);
+
+    }
+
+    [STAThread]
+    public static void Main()
+    {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+        Application.Run(new RainbowLines());
+    }
+}
